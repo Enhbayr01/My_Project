@@ -1,8 +1,9 @@
 require("@babel/polyfill");
 import Search from "./model/Search";
-import { elements, renderLoader, clearLoader } from "./view/base";
-import * as searchView from "./view/searchView";
+import { elements, renderLoader, clearLoader } from "./View/base";
+import * as searchView from "./View/searchView";
 import Recipe from "./model/Recipe";
+import { renderRecipe, clearRecipe } from "../View/recipeView";
 
 /**
  * Web app төлөв
@@ -52,5 +53,28 @@ elements.pageButtons.addEventListener("click", e => {
   }
 });
 
-const r = new Recipe(47746);
-r.getRecipe();
+// Жорын controller
+
+const controlRecipe = async () => {
+  // URL-аас ID салгах
+  const id = window.location.hash.replace("#", "");
+  // Жорны моделийг үүсгэж өгнө.
+  state.recipe = new Recipe(id);
+  // UI дэлгэц бэлдэх
+  clearRecipe();
+  renderLoader(elements.recipeDiv);
+  
+  // Жороо татаж авчирна
+  await state.recipe.getRecipe();
+  // Жорыг гүйцэтгэх хугацаа болон орцыг тооцоолно
+  clearLoader();
+  state.recipe.calcTime();
+  state.recipe.calcHuniiToo();
+
+   // Жороо дэлгэцэнд гаргана 
+  renderRecipe(state.recipe);
+
+};
+
+window.addEventListener('hashchange', controlRecipe);
+window.addEventListener('load', controlRecipe);
