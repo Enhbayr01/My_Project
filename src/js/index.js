@@ -3,8 +3,9 @@ import Search from "./model/Search";
 import { elements, renderLoader, clearLoader } from "./View/base";
 import * as searchView from "./View/searchView";
 import Recipe from "./model/Recipe";
-import { renderRecipe, clearRecipe } from "../View/recipeView";
-
+import List from "./Model/list";
+import { renderRecipe, clearRecipe, highlightSelectedRecipe } from "./View/recipeView";
+import * as listView from "./View/listView";
 /**
  * Web app төлөв
  * - Хайлтын query, үр дүн
@@ -58,23 +59,67 @@ elements.pageButtons.addEventListener("click", e => {
 const controlRecipe = async () => {
   // URL-аас ID салгах
   const id = window.location.hash.replace("#", "");
-  // Жорны моделийг үүсгэж өгнө.
-  state.recipe = new Recipe(id);
-  // UI дэлгэц бэлдэх
-  clearRecipe();
-  renderLoader(elements.recipeDiv);
-  
-  // Жороо татаж авчирна
-  await state.recipe.getRecipe();
-  // Жорыг гүйцэтгэх хугацаа болон орцыг тооцоолно
-  clearLoader();
-  state.recipe.calcTime();
-  state.recipe.calcHuniiToo();
-
-   // Жороо дэлгэцэнд гаргана 
-  renderRecipe(state.recipe);
+ if(id){
+   // Жорны моделийг үүсгэж өгнө.
+   state.recipe = new Recipe(id);
+   // UI дэлгэц бэлдэх
+   clearRecipe();
+   renderLoader(elements.recipeDiv);
+   highlightSelectedRecipe(id);
+   
+   // Жороо татаж авчирна
+   await state.recipe.getRecipe();
+   // Жорыг гүйцэтгэх хугацаа болон орцыг тооцоолно
+   clearLoader();
+   state.recipe.calcTime();
+   state.recipe.calcHuniiToo();
+ 
+    // Жороо дэлгэцэнд гаргана 
+   renderRecipe(state.recipe);
+ }
 
 };
 
-window.addEventListener('hashchange', controlRecipe);
-window.addEventListener('load', controlRecipe);
+// window.addEventListener('hashchange', controlRecipe);
+// window.addEventListener('load', controlRecipe);
+['hashchange', 'load'].forEach(e => window.addEventListener(e, controlRecipe));
+
+// Найрлаганы controller
+
+const controlList = () => {
+
+  //Найрлаганы моделийг үүсгэнэ
+  state.list = new List();
+///өмнө харагдаж байсан item устгах
+
+  listView.clearItem();
+
+  //уг моделруу одоо харагдаж байгаа жорны бүх найрлагыг авч хйинэ 
+  state.recipe.ingredients.forEach(n => { 
+    const item = state.list.addItem(n);
+    //туайн найрлагыг дэлгэцэнд гаргана
+
+  listView.renderItem(item);
+
+  });
+
+};
+
+elements.recipeDiv.addEventListener('click', e => {
+  if(e.target.matches(".recipe__btn, .recipe__btn * ")){
+   controlList();
+   
+  }
+});
+
+
+elements.shoppingList.addEventListener('click', e => {
+  //click хийсэн list бариж авах
+  const id = e.target.closest('.shopping__item').dataset.itemid;
+
+
+  state.list.deleteItem(id);
+
+  listView.deleteItem(id);
+
+});

@@ -9,7 +9,20 @@ const renderNairlaga = orts => `
              ${orts}
        </div>
     </li>
-`
+`;
+
+export const highlightSelectedRecipe = id =>{
+    
+    const arr = Array.from(document.querySelectorAll(".results__link"));
+    arr.forEach(el => el.classList.remove("result__link--active"));
+
+    const domObj = document
+    .querySelector(`a[href*="${id}"]`);
+
+    if(domObj) domObj.classList.add("results__link--active");
+};
+
+
 export const clearRecipe = () =>{
     elements.recipeDiv.innerHTML = "";
 }
