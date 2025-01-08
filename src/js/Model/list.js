@@ -1,4 +1,3 @@
-
 import uniqid from 'uniqid';
 
 export default class List{
@@ -23,6 +22,6 @@ export default class List{
         this.items.push(newItem);
 
         return newItem;
+    }
 }
-     }
      

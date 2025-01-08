@@ -156,7 +156,7 @@ const controlLike = () => {
 };
 
 elements.recipeDiv.addEventListener('click', e => {
-  if(e.target.matches(".recipe__btn, .recipe__btn * ")){
+  if(e.target.matches(".recipe__btn, .recipe__btn *")){
    controlList();
    
   }else if (e.target.matches('.recipe__love, .recipe__love *')){
