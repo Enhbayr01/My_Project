@@ -26,7 +26,7 @@ import * as listView from "./View/listView";
  */
 
 const state = {};
-likesView.toggleLikeMenu(0);
+
 
 const controlSearch = async () => {
   // 1) Вэбээс хайлтын түлхүүр үгийг гаргаж авна.
@@ -71,7 +71,7 @@ elements.pageButtons.addEventListener("click", e => {
 const controlRecipe = async () => {
   // URL-аас ID салгах
   const id = window.location.hash.replace("#", "");
-  if(!state.likes) state.likes = new Like();
+ 
 
   if(id){
    // Жорны моделийг үүсгэж өгнө.
@@ -97,6 +97,23 @@ const controlRecipe = async () => {
 // window.addEventListener('hashchange', controlRecipe);
 // window.addEventListener('load', controlRecipe);
 ['hashchange', 'load'].forEach(e => window.addEventListener(e, controlRecipe));
+
+
+window.addEventListener("load", e => {
+
+  //like modeliig uusgene
+  if(!state.likes) state.likes = new Like();
+
+  //like tsesiig gargaj haruula
+  likesView.toggleLikeMenu(state.likes.getNumberOfLikes());
+
+  //like baiwal tedgeeriig like tsesend nemj haruulna
+
+  state.likes.likes.forEach(like => likesView.renderLike(like));
+
+
+
+});
 
 // Найрлаганы controller
 
